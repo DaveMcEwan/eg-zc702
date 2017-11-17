@@ -1,36 +1,36 @@
-Modifying the 2016.2 release
-============================
+2016.2-mod
+==========
 
 This is a modified version of Xilinx's released boot files located at:
 `http://www.wiki.xilinx.com/Zynq+2016.2+Release`
 The goal is a minimal linux environment with the following features:
 
-    - SSH access via Ethernet
-    - Static IP address `192.168.0.10`
-    - User:password `root:`
-    - Configure Programmable Logic (PL) with `cat something.bit > /dev/xdevcfg`
+- SSH access via Ethernet
+- Static IP address `192.168.0.10`
+- User:password `root:`
+- Configure Programmable Logic (PL) with `cat something.bit > /dev/xdevcfg`
 
 The simplest way to get started is simply to copy all the files from this
 directory to the `boot` partition of the SD card.
 This assumes you have already partitioned the SD card to contain:
 
-    - FAT, boot, 200M
-    - EXT4, the rest of the card
+- FAT, boot, 200M
+- EXT4, the rest of the card
 
 The file `pl.bit` is not required for booting.
 This is supplied to be used as a test for the PL configuration.
-If successful the 8 LEDs should be in the pattern 0x55 rather than 0xFF.
+If successful, the 8 LEDs should be in the pattern 0x55 rather than 0xFF.
 Assuming you have `zc702` setup as an SSH alias you can run `make xdevcfg`.
 
 The only files actually required to be on the SD card are:
 
-    - `BOOT.BIN` - Specially named first file loaded, containing First Stage
-       Boot Loader
-    - `uImage` - Linux kernel zImage wrapped in U-Boot header
-    - `devicetree.dtb` - Linux Device Tree Blob
-    - `uramdisk.image.gz` - Root filesyste as a gzipped CPIO archive, wrapped
-      in a U-Boot header.
-      This is the only file which needs to be modified (I assume naively).
+- `BOOT.BIN` - Specially named first file loaded, containing First Stage
+  Boot Loader
+- `uImage` - Linux kernel zImage wrapped in U-Boot header
+- `devicetree.dtb` - Linux Device Tree Blob
+- `uramdisk.image.gz` - Root filesyste as a gzipped CPIO archive, wrapped in a
+  U-Boot header.
+  This is the only file which needs to be modified (I assume naively).
 
 
 Modifying initramfs: short version
