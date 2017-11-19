@@ -13,14 +13,17 @@ CC := $(CROSS)gcc
 CPP := $(CROSS)cpp
 LD := $(CROSS)ld
 
+# More warnings.
+CFLAGS := -Wall -Wextra
+
 # The minimal linux does not have shared libraries to dynamically link to so
 # executable must be statically linked.
 # Otherwise, when running ./foo you get an error like:
 #	-sh: ./foo: No such file or directory
-CFLAGS := -static
+LDFLAGS := -static
 
-# More warnings.
-CFLAGS += -Wall -Wextra
+# Link to libraries.
+#LDLIBS := -lm
 
 # First target is the default so name it as such.
 default: $(SELF)
@@ -30,8 +33,8 @@ $(SELF): $(DEPS)
 
 .PHONY : clean
 clean:
-	-rm *.o
-	-rm $(SELF)
+	-rm -f *.o
+	-rm -f $(SELF)
 
 # For this target to work you need to have ssh setup appropriately using
 # ~/.ssh/config on the host.
