@@ -45,6 +45,10 @@ clean:
 #		StrictHostKeyChecking no
 #		UserKnownHostsFile /dev/null
 #		LogLevel QUIET
-run:
+.PHONY : transfer
+transfer:
 	scp $(SELF) zc702:~/
+
+.PHONY : run
+run: transfer
 	ssh zc702 -C "./$(SELF)"

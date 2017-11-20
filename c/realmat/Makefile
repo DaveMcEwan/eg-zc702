@@ -48,11 +48,3 @@ clean:
 .PHONY : transfer
 transfer:
 	scp $(SELF) zc702:~/
-
-.PHONY : run
-run: transfer
-	ssh zc702 -C "./$(SELF) tst.3x4 -i"
-
-.PHONY : run-notf
-run-notf:
-	ssh zc702 -C "./$(SELF) tst.3x3.symm -i"
