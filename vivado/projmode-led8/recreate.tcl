@@ -101,21 +101,14 @@ if { $::argc > 0 } {
 set orig_proj_dir "[file normalize "$origin_dir/"]"
 
 # Backup files under source control to avoid create_project overwrite.
-# TODO: Copy to tmpdir and repopulate without hardcoded paths.
-file copy ./${project_name}.srcs/sources_1/bd/led8/hdl/led8_wrapper.v ./
-file copy ./${project_name}.srcs/constrs_1/led8.xdc ./
-file copy ./${project_name}.srcs/sim_1/imports/led8/zynq_tb.v ./
+file copy ${project_name}.srcs tmpdir
 
 # Create project
 set zc702_part "xc7z020clg484-1"
 create_project -part ${zc702_part} -force ${project_name}
 
-file mkdir ./${project_name}.srcs/sources_1/bd/led8/hdl
-file mkdir ./${project_name}.srcs/constrs_1
-file mkdir ./${project_name}.srcs/sim_1/imports/led8
-file copy ./led8_wrapper.v ./${project_name}.srcs/sources_1/bd/led8/hdl/led8_wrapper.v
-file copy ./led8.xdc ./${project_name}.srcs/constrs_1/led8.xdc
-file copy ./zynq_tb.v ./${project_name}.srcs/sim_1/imports/led8/zynq_tb.v
+# Repopulate from tmpdir
+file copy tmpdir ${project_name}.srcs
 
 # Set the directory path for the new project
 set proj_dir [get_property directory [current_project]]
