@@ -18,6 +18,7 @@ Specifically, everything here is tested using Debian 9.2 (Stretch).
 To modify the boot images you may need to install `u-boot-tools` via APT.
 To compile software for the ARM you may need to install `gcc-arm-linux-gnueabi`
 via APT.
+To generate bitstreams for programming the PL you need to install Vivado.
 
 Several make targets assume you have something similar to this in
 `~/.ssh/config`:

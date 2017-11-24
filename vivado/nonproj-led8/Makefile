@@ -1,7 +1,7 @@
 
 SELF := $(shell basename $(PWD))
 
-default: all
+default: bitstream
 
 bitstream:
 	vivado -mode batch -source tcl/top.tcl

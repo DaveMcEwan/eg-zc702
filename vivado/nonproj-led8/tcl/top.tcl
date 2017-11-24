@@ -7,14 +7,13 @@ set CHECKPOINT 1
 set_part ${part}
 
 # Build IP from catalog.
-source tcl/synth_ip.tcl
-# TODO: Not sure why this isn't working.
-#if [ file exists ${dir_bld}/ip.dcp ] {
-#    read_checkpoint ${dir_bld}/ip.dcp
-#} else {
-#    source tcl/synth_ip.tcl
-#    write_checkpoint ${dir_bld}/ip.dcp
-#}
+if [ file exists ${dir_bld}/synth_ip.DONE ] {
+    read_checkpoint ${dir_bld}/ip/ps7_m/ps7_m.dcp
+    read_checkpoint ${dir_bld}/ip/rst_m/rst_m.dcp
+} else {
+    source tcl/synth_ip.tcl
+    exec touch ${dir_bld}/synth_ip.DONE
+}
 
 # Read in all source files.
 read_verilog [ glob ${dir_hdl}/*.v ]
@@ -65,22 +64,3 @@ write_xdc -no_fixed_only -force ${dir_bld}/impl.v
 # Write out a bitstream.
 write_bitstream -force ${dir_bld}/${projname}.bit
 
-
-
-
-
-
-
-
-
-
-
-
-
-# https://www.xilinx.com/support/documentation/sw_manuals/xilinx2015_3/ug835-vivado-tcl-commands.pdf
-# Page 284
-# -in_memory is not part of the standard non-project design flow.
-#create_project -part ${part} -in_memory ${projname}
-
-# This requires an open project.
-#create_bd_design -dir build ${projname}

@@ -9,7 +9,7 @@ module pl_m (
   output wire [7:0] o_led
 );
 
-  assign o_led = 8'ha5;
+  assign o_led = 8'h55;
 
 endmodule
 
