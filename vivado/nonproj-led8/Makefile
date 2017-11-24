@@ -1,13 +1,10 @@
 
 SELF := $(shell basename $(PWD))
 
-default: bitstream
+default: all
 
 bitstream:
 	vivado -mode batch -source tcl/top.tcl
-
-transfer:
-	scp build/nonproj-led8.bit
 
 .PHONY : clean
 clean:
