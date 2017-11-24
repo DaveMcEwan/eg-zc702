@@ -3,6 +3,7 @@ source tcl/common.tcl
 
 set REPORT 1
 set CHECKPOINT 1
+set NETLIST 1
 
 set_part ${part}
 
@@ -17,6 +18,7 @@ if [ file exists ${dir_bld}/synth_ip.DONE ] {
 
 # Read in all source files.
 read_verilog [ glob ${dir_hdl}/*.v ]
+read_verilog [ glob ${dir_hdl}/*.sv ]
 
 # Read in constraints.
 read_xdc ${dir_xdc}/clkrst.xdc
@@ -58,8 +60,10 @@ if $REPORT {
 }
 
 # Write out netlist and constraints.
-write_verilog -force ${dir_bld}/netlist.v
-write_xdc -no_fixed_only -force ${dir_bld}/impl.v
+if $NETLIST {
+    write_verilog -force ${dir_bld}/netlist.v
+    write_xdc -no_fixed_only -force ${dir_bld}/impl.v
+}
 
 # Write out a bitstream.
 write_bitstream -force ${dir_bld}/${projname}.bit

@@ -252,9 +252,6 @@ module top_m (
 // project-specific logic, wires and instances.
   pl_m pl_u ( // {{{
     .i_clk0(ps7_o_FCLK_CLK0),
-    .i_clk1(1'b0),
-    .i_clk2(1'b0),
-    .i_clk3(1'b0),
     .i_ic_rst(rst_o_interconnect_aresetn),
     .i_rst(rst_o_peripheral_aresetn),
 
