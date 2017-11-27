@@ -1,0 +1,10 @@
+# Build directories
+build/*
+
+# Hidden directories, created by Vivado.
+.*/*
+
+# Vivado logs and TCL journals.
+vivado*.log
+vivado*.jou
+usage_statistics*
