@@ -86,7 +86,14 @@ static struct argp_option options[] = {
     {"info", 'i', 0, 0, "Print general info.", 0},
     {"maxiter", 'n', "(int > 1)", 0, "Maximum number of iterations.", 0},
     {"epsilon", 'e', "(float < 0.0)", 0, "Error bound.", 0},
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-field-initializers"
+#endif
     {0}};
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 static error_t parse_opt(int key, char *arg, struct argp_state *state) {
   struct arguments *arguments = state->input;
