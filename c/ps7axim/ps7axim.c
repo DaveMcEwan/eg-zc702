@@ -173,16 +173,18 @@ void *mmap_M_AXI_GPx(int dbg, int unsigned port, size_t len,
          __func__, len, offset, size_mmap);
   }
 
-  off_t offset_req = lower_mmap + offset;
-  void *p = wstd_mmap_devmem(dbg, len, offset_req);
+  // Round offset down to 4k page boundary (usually 4k).
+  long page_offset = offset & wstd_pagemask();
+  off_t mmap_offset = (lower_mmap + offset) & wstd_pagemaskn(dbg);
+  void *p = wstd_mmap_devmem(dbg, len, mmap_offset) + page_offset;
 
   wstd_dbg(dbg, "%s(%d, %d, 0x%x) = 0x%x", __func__, port, len, offset,
            (uintptr_t)p);
   return p;
 }
 
-uint32_t ps7axim_read(bool verb, int dbg, int unsigned port,
-                          uintptr_t offset, size_t len) {
+uint32_t ps7axim_read(bool verb, int dbg, int unsigned port, uintptr_t offset,
+                      size_t len) {
   if (verb) {
     printf("%s\tport=%d\toffset=0x%08x\tlen=%d", __func__, port, offset, len);
     printf((dbg) ? "\n" : "\t");
@@ -193,7 +195,7 @@ uint32_t ps7axim_read(bool verb, int dbg, int unsigned port,
 
   r = *p; // Perform actual read.
 
-  wstd_munmap(dbg, (void *)offset, len);
+  wstd_munmap(dbg, (void *)((uintptr_t)p & wstd_pagemaskn(dbg)), len);
 
   return r;
 }
@@ -208,7 +210,7 @@ void ps7axim_write(bool verb, int dbg, int unsigned port, uintptr_t offset,
 
   *p = value; // Perform actual write.
 
-  wstd_munmap(dbg, (void *)offset, len);
+  wstd_munmap(dbg, (void *)((uintptr_t)p & wstd_pagemaskn(dbg)), len);
 
   return;
 }
@@ -227,8 +229,8 @@ int main(int argc, char **argv) {
   int unsigned offset = strtol(args.args[0], NULL, 0);
 
   if (args.read) {
-    uint32_t r = ps7axim_read(args.verbose, args.debug, args.port, offset,
-                              args.length);
+    uint32_t r =
+        ps7axim_read(args.verbose, args.debug, args.port, offset, args.length);
     printf("%s0x%08x\n", (args.verbose) ? "value=" : "", r);
   }
 
