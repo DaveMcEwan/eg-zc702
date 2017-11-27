@@ -116,6 +116,8 @@ module top_m (
   wire          ps7_o_TTC0_WAVE1_OUT;
   wire          ps7_o_TTC0_WAVE2_OUT;
 
+  wire [1:0]    ps7_o_USB0_PORT_INDCTL;
+  wire          ps7_o_USB0_VBUS_PWRSELECT;
   wire          ps7_o_FCLK_CLK0;
   wire          ps7_o_FCLK_RESET0_N;
   // }}} ps7 wires
