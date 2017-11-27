@@ -31,11 +31,6 @@ default: $(SELF)
 #DEPS := another.o
 $(SELF): $(DEPS)
 
-.PHONY : clean
-clean:
-	-rm -f *.o
-	-rm -f $(SELF)
-
 # For this target to work you need to have ssh setup appropriately using
 # ~/.ssh/config on the host.
 # I.e. containing something like this:
@@ -48,3 +43,16 @@ clean:
 .PHONY : transfer
 transfer:
 	scp $(SELF) zc702:~/
+
+.PHONY : clean
+clean:
+	-rm -f *.o
+	-rm -f $(SELF)
+
+# List all Make targets.
+.PHONY : list
+list:
+	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | \
+		awk -v RS= -F: '/^# File/,/^# Finished Make data base/ \
+			{if ($$1 !~ "^[#.]") {print $$1}}' | \
+		sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'
