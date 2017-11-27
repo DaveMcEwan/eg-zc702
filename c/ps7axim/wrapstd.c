@@ -120,3 +120,15 @@ void *wstd_mmap_devmem(int dbg, size_t len, off_t offset) {
            (int)len, path, (int)offset, (uintptr_t)p);
   return p;
 }
+
+uintptr_t wstd_pagemask(int dbg) {
+  long s = wstd_sysconf(dbg, _SC_PAGESIZE);
+  long m = s - 1;
+  return (uintptr_t)m;
+}
+
+uintptr_t wstd_pagemaskn(int dbg) {
+  long s = wstd_sysconf(dbg, _SC_PAGESIZE);
+  long m = s - 1;
+  return (uintptr_t)(~m);
+}
