@@ -1,5 +1,5 @@
-C programs
-==========
+C programs with GCC
+===================
 
 Each directory here contains a single C program in a .c file with the same name
 as the directory.
