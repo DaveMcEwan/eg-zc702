@@ -156,14 +156,14 @@ module pl_m (
   assign o_M_AXI_GP0_ARREADY = 1'b1;
 
   // Store/return last written data word, display on LEDs.
-  `ff_cg_arst (logic [31:0], gp0_wdata, i_clk0, i_M_AXI_GP0_WVALID, i_rst, '0)
+  `ff_cg_arst (logic [31:0], gp0_wdata, i_clk0, i_M_AXI_GP0_WVALID, i_rst, 32'b0)
   always_comb gp0_wdata_d = i_M_AXI_GP0_WDATA;
   assign o_led = gp0_wdata_q[7:0];
   assign o_M_AXI_GP0_RDATA = gp0_wdata_q;
 
   // Response to write is always OKAY.
   assign o_M_AXI_GP0_BRESP = `AXI_RESP_OKAY;
-  `ff_nocg_arst (logic, gp0_bvalid, i_clk0, i_rst, '0)
+  `ff_nocg_arst (logic, gp0_bvalid, i_clk0, i_rst, 1'b0)
   always_comb
     if      (i_M_AXI_GP0_WVALID)  gp0_bvalid_d = 1'b1;
     else if (i_M_AXI_GP0_BREADY)  gp0_bvalid_d = 1'b0;
@@ -172,7 +172,7 @@ module pl_m (
 
   // Response to read is always OKAY.
   assign o_M_AXI_GP0_RRESP = `AXI_RESP_OKAY;
-  `ff_nocg_arst (logic, gp0_rvalid, i_clk0, i_rst, '0)
+  `ff_nocg_arst (logic, gp0_rvalid, i_clk0, i_rst, 1'b0)
   always_comb
     if      (i_M_AXI_GP0_ARVALID) gp0_rvalid_d = 1'b1;
     else if (i_M_AXI_GP0_RREADY)  gp0_rvalid_d = 1'b0;
@@ -181,8 +181,8 @@ module pl_m (
   assign o_M_AXI_GP0_RLAST = gp0_rvalid_q && i_M_AXI_GP0_RREADY;
 
   // Reflect IDs
-  `ff_cg_arst (logic [11:0], gp0_awid, i_clk0, i_M_AXI_GP0_AWVALID, i_rst, '0)
-  `ff_cg_arst (logic [11:0], gp0_arid, i_clk0, i_M_AXI_GP0_ARVALID, i_rst, '0)
+  `ff_cg_arst (logic [11:0], gp0_awid, i_clk0, i_M_AXI_GP0_AWVALID, i_rst, 12'd0)
+  `ff_cg_arst (logic [11:0], gp0_arid, i_clk0, i_M_AXI_GP0_ARVALID, i_rst, 12'd0)
   always_comb gp0_awid_d = i_M_AXI_GP0_AWID;
   always_comb gp0_arid_d = i_M_AXI_GP0_ARID;
   assign o_M_AXI_GP0_BID = gp0_awid_q;
