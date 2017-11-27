@@ -59,3 +59,26 @@ memory mapped address of the ports.
 
 This is specific to Zynq as the AXI ports have hard-coded physical addresses
 at `0x4000_0000` (port 0), and `0x8000_0000` (port 1), both with a range of 1GB.
+
+This may be used in conjunction with the `vivado/nonproj-led8` bitstream to
+control the pattern of the 8 LEDs.
+The bitsteam from `projmode-led8` is also usable but does not have a makefile
+for easy reproduction.
+
+    # Configure programmable logic with bitstream.
+    cd <eg-zc702>/vivado/nonproj-led8
+    make bitstream && make transfer && make program
+
+    # Compile ARM linux binary and transfer to zc702.
+    cd <eg-zc702>/(gcc|clang)/ps7axim
+    make && make transfer
+
+    # Get a terminal on zc702.
+    ssh zc702
+
+    # Read/write the addressable LEDs.
+    ./ps7axim -w 0x12345678 0   # Set the LEDs to 0x78, full 32b is stored.
+    ./ps7axim -r 0              # Read back the stored value (0x12345678).
+
+Read are always executed before writes so this can be used to get the current
+value and set a new one in the same command by using both `-r` and `-w`.
