@@ -1,4 +1,4 @@
-/* wrapstd.h - Common utility functions.
+/* wrapstd.h - Standard library functions wrapped in debug printers.
  * Dave McEwan 2017-11-08
  */
 
@@ -6,6 +6,7 @@
 #define _WRAPSTD_H
 
 void wstd_dbg(int dbg, const char *format, ...);
+long wstd_sysconf(int dbg, int name);
 int wstd_open(int dbg, const char *path, int oflag);
 void wstd_close(int dbg, int fd);
 int wstd_fstat(int dbg, int fd, struct stat *sb);

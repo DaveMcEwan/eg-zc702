@@ -38,6 +38,15 @@ void wstd_dbg(int dbg, const char *format, ...) {
   }
 }
 
+long wstd_sysconf(int dbg, int name) {
+  long r = sysconf(name);
+  if (r == -1) {
+    err(1, "sysconf(%d)", name);
+  }
+  wstd_dbg(dbg, "sysconf(%d) = %d", name, r);
+  return r;
+}
+
 int wstd_open(int dbg, const char *path, int oflag) {
   int fd = open(path, oflag);
   if (fd == -1) {
