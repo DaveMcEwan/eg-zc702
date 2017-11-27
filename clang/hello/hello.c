@@ -1,0 +1,1 @@
+../../gcc/hello/hello.c

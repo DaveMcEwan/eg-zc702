@@ -7,14 +7,11 @@ CROSS_COMPILE := arm-linux-gnueabi
 
 # Setup variables used by make's implicit rules.
 # https://www.gnu.org/software/make/manual/html_node/Catalogue-of-Rules.html
-AR := $(CROSS_COMPILE)-ar
-AS := $(CROSS_COMPILE)-as
-CC := $(CROSS_COMPILE)-gcc
-CPP := $(CROSS_COMPILE)-cpp
-LD := $(CROSS_COMPILE)-ld
+CC := clang
 
 # More warnings.
-CFLAGS := -Wall -Wextra
+CFLAGS := -target $(CROSS_COMPILE) --sysroot=/usr/$(CROSS_COMPILE)
+CFLAGS += -Wall -Wextra
 
 # The minimal linux does not have shared libraries to dynamically link to so
 # executable must be statically linked.
