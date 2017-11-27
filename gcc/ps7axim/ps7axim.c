@@ -72,7 +72,14 @@ static struct argp_option options[] = {
     {"read", 'r', 0, 0, "Perform read, printing result to STDOUT.", 0},
     {"write", 'w', "<value>", 0, "Perform write.", 0},
     {"length", 'l', "(1|2|4)", 0, "Access length in bytes. Default 4", 0},
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-field-initializers"
+#endif
     {0}};
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 void rm_uscores(char *rd) {
   char *wr = rd;
@@ -174,7 +181,7 @@ void *mmap_M_AXI_GPx(int dbg, int unsigned port, size_t len,
   }
 
   // Round offset down to 4k page boundary (usually 4k).
-  long page_offset = offset & wstd_pagemask();
+  long page_offset = offset & wstd_pagemask(dbg);
   off_t mmap_offset = (lower_mmap + offset) & wstd_pagemaskn(dbg);
   void *p = wstd_mmap_devmem(dbg, len, mmap_offset) + page_offset;
 

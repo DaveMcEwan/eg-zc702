@@ -15,7 +15,7 @@ void *wstd_mmap(int dbg, void *addr, size_t len, int prot, int flags,
 void wstd_munmap(int dbg, void *addr, size_t len);
 void *wstd_mmap_devmem(int dbg, size_t len, off_t offset);
 
-uintptr_t wstd_pagemask();
-uintptr_t wstd_pagemaskn();
+uintptr_t wstd_pagemask(int dbg);
+uintptr_t wstd_pagemaskn(int dbg);
 
 #endif
