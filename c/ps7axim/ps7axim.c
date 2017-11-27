@@ -194,8 +194,6 @@ uint32_t ps7axim_read(bool verb, int dbg, int unsigned port,
   r = *p; // Perform actual read.
 
   wstd_munmap(dbg, (void *)offset, len);
-  /*
-  */
 
   return r;
 }
@@ -211,8 +209,6 @@ void ps7axim_write(bool verb, int dbg, int unsigned port, uintptr_t offset,
   *p = value; // Perform actual write.
 
   wstd_munmap(dbg, (void *)offset, len);
-  /*
-  */
 
   return;
 }
