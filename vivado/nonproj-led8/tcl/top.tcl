@@ -1,9 +1,12 @@
 
-source tcl/common.tcl
-
 set REPORT 1
 set CHECKPOINT 1
 set NETLIST 1
+
+source tcl/common.tcl
+if [ file exists tcl/local.tcl ] {
+    source tcl/local.tcl
+}
 
 set_part ${part}
 

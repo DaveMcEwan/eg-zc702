@@ -8,3 +8,7 @@ build/*
 vivado*.log
 vivado*.jou
 usage_statistics*
+
+# Local settings.
+# E.g. disabling REPORT, CHECKPOINT, NETLIST.
+tcl/local.tcl
