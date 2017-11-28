@@ -1,9 +1,13 @@
 
-source tcl/common.tcl
-
 set REPORT 1
 set CHECKPOINT 1
 set NETLIST 1
+
+source tcl/common.tcl
+if [ file exists tcl/local.tcl ] {
+    # git ignores this file so make untracked changes in tcl/local.tcl
+    source tcl/local.tcl
+}
 
 set_part ${part}
 
@@ -16,20 +20,20 @@ if [ file exists ${dir_bld}/synth_ip.DONE ] {
     exec touch ${dir_bld}/synth_ip.DONE
 }
 
-# Read in only top_m source file.
-# Everything else should be contained in pl_m and synthed by yosys.
+# Read in EDIF produced by yosys synthesis.
+read_edif ${dir_bld}/pl_m.edif
+
+# Read in only top_m source file and stub for pl_m which has been synthed to
+# EDIF format by yosys.
+# The stub file must have the same ports as the EDIF.
 read_verilog ${dir_hdl}/top_m.v
+read_verilog ${dir_hdl}/pl_m_stub.v
 
 # Read in constraints.
 read_xdc ${dir_xdc}/clkrst.xdc
 read_xdc ${dir_xdc}/ddr.xdc
 read_xdc ${dir_xdc}/mio.xdc
 read_xdc ${dir_xdc}/o_led.xdc
-
-# Read in EDIF produced by yosys synthesis.
-read_edif ${dir_bld}/pl_m.edif
-#link_design -top pl_m -mode out_of_context
-# TODO: synth doesn't find pl_m module.
 
 # Synthesize top level.
 synth_design -part ${part} -top top_m
