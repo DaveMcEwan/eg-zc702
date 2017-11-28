@@ -1,45 +1,22 @@
-Vivado
-======
+yosys
+=====
 
-These are example Vivado projects for generating bitstream files suitable for
-congfiguring the Programmable Logic (PL) part of the Zynq FPGA.
+These are example yosys(+Vivado) projects for generating bitstream files
+suitable for congfiguring the Programmable Logic (PL) part of the Zynq FPGA.
 
-
-projmode-led8
--------------
-
-This is the simplest Vivado project and runs in "Project Mode" where Vivado
-provides all workflow infrastructure and integration with the GUI.
-The goal is to generate a bitstream equivalent to the one provided with the
-2016.2-mod boot image files called `pl.bit`.
-To get started:
-
-- `cd projmode-led8`
-- Start the Vivado GUI and recreate the project
-    `vivado -source recreate.tcl`
-- Make design changes (optional, skip this first time)
-- On LHS of the GUI click "Generate Bitstream"
-    - Once finished running (a few minutes) a bitstream file will be available
-      as `projmode-led8.runs/impl_1/led8_wrapper.bit`
-- Test the new bitstream
-    - `scp led8_wrapper.bit zc702:~/`
-    - `ssh zc702 -C "cat led8_wrapper.bit > /dev/xdevcfg"`
-    - The LEDs should be in the pattern 0x55.
-
-Note that this method of using the GUI requires much more care and attention
-with respect to source control.
-You'll have to painstakingly figure out which files to add and which to ignore.
-Non-project mode which doesn't rely on the GUI so much is an easier option to
-use with source control.
+*It is not yet possible to avoid Vivado completely.*
+Yosys is used to synthesize `pl_m` which should contain all the interesting
+logic structures.
+Vivado is then used to synthesize the Xilinx IP from their catalog then stitch
+together the top level (`top_m`), treating `pl_m` as a black box.
 
 
-nonproj-led8
-------------
+led8
+----
 
-This is roughly equivalent in function to projmode-led8 but without the managed
-project structure.
+This is equivalent in function to vivado/nonproj-led8.
 
-    +-nonproj-led8
+    +-led8
         |
         +-hdl       Verilog, SystemVerilog, VHDL source files.
             |
