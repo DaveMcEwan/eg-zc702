@@ -12,13 +12,15 @@ For more info about the on-chip linux environment and related modifications
 please see `boot_sdcard/2016.2-mod/README.md`.
 
 The host software required to modify the `boot_sdcard` files and compile C code
-for the ARM cores is all available from the standard repositories.
+for the ARM cores is all available from the standard distro repositories.
 Specifically, everything here is tested using Debian 9.2 (Stretch).
 
 To modify the boot images you may need to install `u-boot-tools` via APT.
 To compile software for the ARM you may need to install `gcc-arm-linux-gnueabi`
-via APT.
-To generate bitstreams for programming the PL you need to install Vivado.
+and associated libc packages via APT.
+Note that clang also depends on the GNU libc libraries.
+To generate bitstreams for programming the PL you need to install Vivado, and
+optionally yosys.
 
 Several make targets assume you have something similar to this in
 `~/.ssh/config`:
@@ -35,3 +37,7 @@ When the Zynq core has booted this allows you to access a shell with
 
 The simplest Zynq C project is `hello` and should be tried before any others
 because there is the least to go wrong.
+The GCC and clang projects are functionally equivalent.
+
+All of the Makefiles in these examples have a target `list` which prints out the
+available targets.
