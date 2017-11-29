@@ -191,7 +191,7 @@ module tb_m ();
   assign v_i_M_AXI_GP1_RREADY = v_GP1_RREADY_gate_q;
   assign v_i_M_AXI_GP1_BREADY = v_GP1_BREADY_gate_q;
 
-  // Randomly set AWID/WID/ARID.
+  // Randomly changes AWID/WID/ARID while not in a transaction.
   `ff_cg_norst(logic, v_GP0_AWID, v_i_clk0, !v_i_M_AXI_GP0_AWVALID)
   always @ (posedge v_i_clk0) v_GP0_AWID_d = $urandom;
   assign v_i_M_AXI_GP0_AWID = v_GP0_AWID_q;
@@ -206,6 +206,46 @@ module tb_m ();
   `ff_cg_norst(logic, v_GP1_ARID, v_i_clk0, !v_i_M_AXI_GP1_ARVALID)
   always @ (posedge v_i_clk0) v_GP1_ARID_d = $urandom;
   assign v_i_M_AXI_GP1_ARID = v_GP1_ARID_q;
+
+  // NOTE: No support for alternative memory types.
+  // Tied to "Device Non-bufferable".
+  assign v_i_M_AXI_GP0_AWCACHE = 4'b0000;
+  assign v_i_M_AXI_GP0_ARCACHE = 4'b0000;
+  assign v_i_M_AXI_GP1_AWCACHE = 4'b0000;
+  assign v_i_M_AXI_GP1_ARCACHE = 4'b0000;
+
+  // NOTE: No support for any QoS scheme.
+  assign v_i_M_AXI_GP0_AWQOS = 4'b0000;
+  assign v_i_M_AXI_GP0_ARQOS = 4'b0000;
+  assign v_i_M_AXI_GP1_AWQOS = 4'b0000;
+  assign v_i_M_AXI_GP1_ARQOS = 4'b0000;
+
+  // AXI4 does not support locked transactions, only for AXI3
+  // NOTE: No support for exclusive access.
+  assign v_i_M_AXI_GP0_AWLOCK = 2'b00;
+  assign v_i_M_AXI_GP0_ARLOCK = 2'b00;
+  assign v_i_M_AXI_GP1_AWLOCK = 2'b00;
+  assign v_i_M_AXI_GP1_ARLOCK = 2'b00;
+
+  // NOTE: No support for access permissions.
+  // Tied to {data, secure, unprivileged}.
+  assign v_i_M_AXI_GP0_AWPROT = 3'b000;
+  assign v_i_M_AXI_GP0_ARPROT = 3'b000;
+  assign v_i_M_AXI_GP1_AWPROT = 3'b000;
+  assign v_i_M_AXI_GP1_ARPROT = 3'b000;
+
+  // NOTE: No support for bursting.
+  // Tied to 4B (32b), FIXED.
+  assign v_i_M_AXI_GP0_AWLEN   = 8'd0;
+  assign v_i_M_AXI_GP0_AWSIZE  = 3'b010;
+  assign v_i_M_AXI_GP0_AWBURST = 2'b00;
+
+  initial begin
+    v_i_M_AXI_GP0_AWVALID = 1'b0;
+    v_i_M_AXI_GP0_ARVALID = 1'b0;
+    v_i_M_AXI_GP1_AWVALID = 1'b0;
+    v_i_M_AXI_GP1_ARVALID = 1'b0;
+  end
 
   reg [31:0] v_ps7axim_read_data; // Returned data is written here.
   task ps7axim_read;
@@ -230,7 +270,7 @@ module tb_m ();
     // ARESETn = v_i_rst
 
     // Write address channel signals.
-    reg [11:0]    v_i_AWID;
+    reg [11:0]    v_i_AWID;   // Randomly set outside transaction.
     reg [31:0]    v_i_AWADDR;
     reg [3:0]     v_i_AWLEN;
     reg [2:0]     v_i_AWSIZE;
@@ -238,30 +278,30 @@ module tb_m ();
     reg [1:0]     v_i_AWLOCK;
     reg [3:0]     v_i_AWCACHE;
     reg [2:0]     v_i_AWPROT;
-    reg [3:0]     v_i_AWQOS;
-    //                               AWREGION only in AXI4
-    //                               AWUSER only in AXI4
+    reg [3:0]     v_i_AWQOS; // AXI4
+    //                AWREGION only in AXI4
+    //                AWUSER only in AXI4
     reg           v_i_AWVALID;
     reg           v_o_AWREADY;
 
     // Write data channel signals.
-    reg  [11:0]   v_i_WID;
+    reg  [11:0]   v_i_WID;    // Must be equal to v_i_AWID.
     reg  [31:0]   v_i_WDATA;
     reg  [3:0]    v_i_WSTRB;
     reg           v_i_WLAST;
-    //                               WUSER only in AXI4
+    //                WUSER only in AXI4
     reg           v_i_WVALID;
     reg           v_o_WREADY;
 
     // Write response channel signals.
     reg  [11:0]   v_o_BID;
     reg  [1:0]    v_o_BRESP;
-    //                               BUSER only in AXI4
+    //                BUSER only in AXI4
     reg           v_o_BVALID;
-    reg           v_i_BREADY;
+    reg           v_i_BREADY; // Usually high, randomly drop.
 
     // Read address channel signals.
-    reg  [11:0]   v_i_ARID;
+    reg  [11:0]   v_i_ARID;   // Randomly set outside transaction.
     reg  [31:0]   v_i_ARADDR;
     reg  [3:0]    v_i_ARLEN;
     reg  [2:0]    v_i_ARSIZE;
@@ -270,8 +310,8 @@ module tb_m ();
     reg  [3:0]    v_i_ARCACHE;
     reg  [2:0]    v_i_ARPROT;
     reg  [3:0]    v_i_ARQOS;
-    //                               ARREGION only in AXI4
-    //                               ARUSER only in AXI4
+    //                ARREGION only in AXI4
+    //                ARUSER only in AXI4
     reg           v_i_ARVALID;
     reg           v_o_ARREADY;
 
@@ -280,9 +320,9 @@ module tb_m ();
     reg  [31:0]   v_o_RDATA;
     reg  [1:0]    v_o_RRESP;
     reg           v_o_RLAST;
-    //                               RUSER only in AXI4
+    //                RUSER only in AXI4
     reg           v_o_RVALID;
-    reg           v_i_RREADY;
+    reg           v_i_RREADY; // Usually high, randomly drop.
 
     // Low-power interface signals; not implemented
 
@@ -292,27 +332,27 @@ module tb_m ();
 
       if (port) begin // {{{ port
         assign v_i_M_AXI_GP1_AWADDR   = v_i_AWADDR;
-        assign v_i_M_AXI_GP1_AWLEN    = v_i_AWLEN;
-        assign v_i_M_AXI_GP1_AWSIZE   = v_i_AWSIZE;
-        assign v_i_M_AXI_GP1_AWBURST  = v_i_AWBURST;
-        assign v_i_M_AXI_GP1_AWLOCK   = v_i_AWLOCK;
-        assign v_i_M_AXI_GP1_AWCACHE  = v_i_AWCACHE;
-        assign v_i_M_AXI_GP1_AWPROT   = v_i_AWPROT;
-        assign v_i_M_AXI_GP1_AWQOS    = v_i_AWQOS;
         assign v_i_M_AXI_GP1_AWVALID  = v_i_AWVALID;
         assign v_i_M_AXI_GP1_WDATA    = v_i_WDATA;
         assign v_i_M_AXI_GP1_WSTRB    = v_i_WSTRB;
         assign v_i_M_AXI_GP1_WLAST    = v_i_WLAST;
         assign v_i_M_AXI_GP1_WVALID   = v_i_WVALID;
         assign v_i_M_AXI_GP1_ARADDR   = v_i_ARADDR;
-        assign v_i_M_AXI_GP1_ARLEN    = v_i_ARLEN;
-        assign v_i_M_AXI_GP1_ARSIZE   = v_i_ARSIZE;
-        assign v_i_M_AXI_GP1_ARBURST  = v_i_ARBURST;
-        assign v_i_M_AXI_GP1_ARLOCK   = v_i_ARLOCK;
-        assign v_i_M_AXI_GP1_ARCACHE  = v_i_ARCACHE;
-        assign v_i_M_AXI_GP1_ARPROT   = v_i_ARPROT;
-        assign v_i_M_AXI_GP1_ARQOS    = v_i_ARQOS;
         assign v_i_M_AXI_GP1_ARVALID  = v_i_ARVALID;
+        assign v_i_AWLEN    = v_i_M_AXI_GP1_AWLEN;
+        assign v_i_AWSIZE   = v_i_M_AXI_GP1_AWSIZE;
+        assign v_i_AWBURST  = v_i_M_AXI_GP1_AWBURST;
+        assign v_i_ARLEN    = v_i_M_AXI_GP1_ARLEN;
+        assign v_i_ARSIZE   = v_i_M_AXI_GP1_ARSIZE;
+        assign v_i_ARBURST  = v_i_M_AXI_GP1_ARBURST;
+        assign v_i_AWCACHE  = v_i_M_AXI_GP1_AWCACHE;
+        assign v_i_ARCACHE  = v_i_M_AXI_GP1_ARCACHE;
+        assign v_i_AWPROT   = v_i_M_AXI_GP1_AWPROT;
+        assign v_i_ARPROT   = v_i_M_AXI_GP1_ARPROT;
+        assign v_i_AWLOCK   = v_i_M_AXI_GP1_AWLOCK;
+        assign v_i_ARLOCK   = v_i_M_AXI_GP1_ARLOCK;
+        assign v_i_AWQOS    = v_i_M_AXI_GP1_AWQOS;
+        assign v_i_ARQOS    = v_i_M_AXI_GP1_ARQOS;
         assign v_i_AWID     = v_i_M_AXI_GP1_AWID;
         assign v_i_WID      = v_i_M_AXI_GP1_WID;
         assign v_i_AWID     = v_i_M_AXI_GP1_ARID;
@@ -332,27 +372,27 @@ module tb_m ();
       end
       else begin
         assign v_i_M_AXI_GP0_AWADDR   = v_i_AWADDR;
-        assign v_i_M_AXI_GP0_AWLEN    = v_i_AWLEN;
-        assign v_i_M_AXI_GP0_AWSIZE   = v_i_AWSIZE;
-        assign v_i_M_AXI_GP0_AWBURST  = v_i_AWBURST;
-        assign v_i_M_AXI_GP0_AWLOCK   = v_i_AWLOCK;
-        assign v_i_M_AXI_GP0_AWCACHE  = v_i_AWCACHE;
-        assign v_i_M_AXI_GP0_AWPROT   = v_i_AWPROT;
-        assign v_i_M_AXI_GP0_AWQOS    = v_i_AWQOS;
         assign v_i_M_AXI_GP0_AWVALID  = v_i_AWVALID;
         assign v_i_M_AXI_GP0_WDATA    = v_i_WDATA;
         assign v_i_M_AXI_GP0_WSTRB    = v_i_WSTRB;
         assign v_i_M_AXI_GP0_WLAST    = v_i_WLAST;
         assign v_i_M_AXI_GP0_WVALID   = v_i_WVALID;
         assign v_i_M_AXI_GP0_ARADDR   = v_i_ARADDR;
-        assign v_i_M_AXI_GP0_ARLEN    = v_i_ARLEN;
-        assign v_i_M_AXI_GP0_ARSIZE   = v_i_ARSIZE;
-        assign v_i_M_AXI_GP0_ARBURST  = v_i_ARBURST;
-        assign v_i_M_AXI_GP0_ARLOCK   = v_i_ARLOCK;
-        assign v_i_M_AXI_GP0_ARCACHE  = v_i_ARCACHE;
-        assign v_i_M_AXI_GP0_ARPROT   = v_i_ARPROT;
-        assign v_i_M_AXI_GP0_ARQOS    = v_i_ARQOS;
         assign v_i_M_AXI_GP0_ARVALID  = v_i_ARVALID;
+        assign v_i_AWLEN    = v_i_M_AXI_GP0_AWLEN;
+        assign v_i_AWSIZE   = v_i_M_AXI_GP0_AWSIZE;
+        assign v_i_AWBURST  = v_i_M_AXI_GP0_AWBURST;
+        assign v_i_ARLEN    = v_i_M_AXI_GP0_ARLEN;
+        assign v_i_ARSIZE   = v_i_M_AXI_GP0_ARSIZE;
+        assign v_i_ARBURST  = v_i_M_AXI_GP0_ARBURST;
+        assign v_i_AWCACHE  = v_i_M_AXI_GP0_AWCACHE;
+        assign v_i_ARCACHE  = v_i_M_AXI_GP0_ARCACHE;
+        assign v_i_AWPROT   = v_i_M_AXI_GP0_AWPROT;
+        assign v_i_ARPROT   = v_i_M_AXI_GP0_ARPROT;
+        assign v_i_AWLOCK   = v_i_M_AXI_GP0_AWLOCK;
+        assign v_i_ARLOCK   = v_i_M_AXI_GP0_ARLOCK;
+        assign v_i_AWQOS    = v_i_M_AXI_GP0_AWQOS;
+        assign v_i_ARQOS    = v_i_M_AXI_GP0_ARQOS;
         assign v_i_AWID     = v_i_M_AXI_GP0_AWID;
         assign v_i_WID      = v_i_M_AXI_GP0_WID;
         assign v_i_AWID     = v_i_M_AXI_GP0_ARID;
@@ -370,6 +410,26 @@ module tb_m ();
         assign v_o_RLAST    = v_o_M_AXI_GP0_RLAST;
         assign v_o_RVALID   = v_o_M_AXI_GP0_RVALID;
       end // }}} port
+
+      fork
+        begin : axi_aw
+          v_i_AWVALID = 1'b0;
+          @ (posedge v_i_clk0);
+          v_i_AWVALID = 1'b1;
+          v_i_AWADDR = i_addr;
+          @ (posedge v_i_clk0);
+          wait (v_o_AWREADY) v_i_AWVALID = 1'b0;
+        end : axi_aw
+        begin : axi_w
+          v_i_WVALID = 1'b0;
+          @ (posedge v_i_clk0);
+          v_i_WVALID = 1'b1;
+          v_i_WDATA = i_data;
+          @ (posedge v_i_clk0);
+          wait (v_o_WREADY) v_i_WVALID = 1'b0;
+          // TODO
+        end : axi_w
+      join
 
     end
   endtask
@@ -465,5 +525,9 @@ module tb_m ();
 
     .o_led                (v_o_led)
   );
+
+  initial begin
+    #30 ps7axim_write(0, 0, 5);
+  end
 
 endmodule
