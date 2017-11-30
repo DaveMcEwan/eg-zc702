@@ -21,14 +21,16 @@
     t n``_d, n``_q; \
     always @ (posedge clk or posedge rst) \
         if (rst)     n``_q <= rstval; \
-        else if (cg) n``_q <= n``_d;
+        else if (cg) n``_q <= n``_d; \
+        else         n``_q <= n``_q;
 // }}}
 // {{{ `ff_cg_arstn (logic [9:0], foo, i_clk, i_cg, i_rstn, '0)
 `define ff_cg_arstn(t, n, clk, cg, rstn, rstval) \
     t n``_d, n``_q; \
     always @ (posedge clk or negedge rstn) \
         if (!rstn)   n``_q <= rstval; \
-        else if (cg) n``_q <= n``_d;
+        else if (cg) n``_q <= n``_d; \
+        else         n``_q <= n``_q;
 // }}}
 // {{{ `ff_nocg_arst (logic [9:0], foo, i_clk, i_rst, '0)
 `define ff_nocg_arst(t, n, clk, rst, rstval) \
@@ -49,14 +51,16 @@
     t n``_d, n``_q; \
     always @ (posedge clk) \
         if (rst)     n``_q <= rstval; \
-        else if (cg) n``_q <= n``_d;
+        else if (cg) n``_q <= n``_d; \
+        else         n``_q <= n``_q;
 // }}}
 // {{{ `ff_cg_srstn (logic [9:0], foo, i_clk, i_cg, i_rstn, '0)
 `define ff_cg_srstn(t, n, clk, cg, rstn, rstval) \
     t n``_d, n``_q; \
     always @ (posedge clk) \
         if (!rstn)   n``_q <= rstval; \
-        else if (cg) n``_q <= n``_d;
+        else if (cg) n``_q <= n``_d; \
+        else         n``_q <= n``_q;
 // }}}
 // {{{ `ff_nocg_srst (logic [9:0], foo, i_clk, i_rst, '0)
 `define ff_nocg_srst(t, n, clk, rst, rstval) \
@@ -76,7 +80,8 @@
 `define ff_cg_norst(t, n, clk, cg) \
     t n``_d, n``_q; \
     always @ (posedge clk) \
-        if (cg) n``_q <= n``_d;
+        if (cg) n``_q <= n``_d; \
+        else    n``_q <= n``_q;
 // }}}
 // {{{ `ff_nocg_norst (logic [9:0], foo, i_clk)
 `define ff_nocg_norst(t, n, clk) \
@@ -99,7 +104,8 @@
     t n``_q u; \
     always @ (posedge clk or posedge rst) \
         if (rst)     n``_q <= rstval; \
-        else if (cg) n``_q <= n``_d;
+        else if (cg) n``_q <= n``_d; \
+        else         n``_q <= n``_q;
 // }}}
 // {{{ `ff_cg_arstn_upk (logic [9:0], foo, [3][4], i_clk, i_cg, i_rstn, '0)
 `define ff_cg_arstn_upk(t, n, u, clk, cg, rstn, rstval) \
@@ -107,7 +113,8 @@
     t n``_q u; \
     always @ (posedge clk or negedge rstn) \
         if (!rstn)   n``_q <= rstval; \
-        else if (cg) n``_q <= n``_d;
+        else if (cg) n``_q <= n``_d; \
+        else         n``_q <= n``_q;
 // }}}
 // {{{ `ff_nocg_arst_upk (logic [9:0], foo, [3][4], i_clk, i_rst, '0)
 `define ff_nocg_arst_upk(t, n, u, clk, rst, rstval) \
@@ -131,7 +138,8 @@
     t n``_q u; \
     always @ (posedge clk) \
         if (rst)     n``_q <= rstval; \
-        else if (cg) n``_q <= n``_d;
+        else if (cg) n``_q <= n``_d; \
+        else         n``_q <= n``_q;
 // }}}
 // {{{ `ff_cg_srstn_upk (logic [9:0], foo, [3][4], i_clk, i_cg, i_rstn, '0)
 `define ff_cg_srstn_upk(t, n, u, clk, cg, rstn, rstval) \
@@ -139,7 +147,8 @@
     t n``_q u; \
     always @ (posedge clk) \
         if (!rstn)   n``_q <= rstval; \
-        else if (cg) n``_q <= n``_d;
+        else if (cg) n``_q <= n``_d; \
+        else         n``_q <= n``_q;
 // }}}
 // {{{ `ff_nocg_srst_upk (logic [9:0], foo, [3][4], i_clk, i_rst, '0)
 `define ff_nocg_srst_upk(t, n, u, clk, rst, rstval) \
@@ -162,7 +171,8 @@
     t n``_d u; \
     t n``_q u; \
     always @ (posedge clk) \
-        if (cg) n``_q <= n``_d;
+        if (cg) n``_q <= n``_d; \
+        else    n``_q <= n``_q;
 // }}}
 // {{{ `ff_nocg_norst_upk (logic [9:0], foo, [3][4], i_clk)
 `define ff_nocg_norst_upk(t, n, u, clk) \
