@@ -27,7 +27,7 @@ read_edif ${dir_bld}/pl_m.edif
 # EDIF format by yosys.
 # The stub file must have the same ports as the EDIF.
 read_verilog ${dir_hdl}/top_m.v
-read_verilog ${dir_hdl}/pl_m_stub.v
+read_verilog ${dir_hdl}/stub/pl_m.v
 
 # Read in constraints.
 read_xdc ${dir_xdc}/clkrst.xdc
