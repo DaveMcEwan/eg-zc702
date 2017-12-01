@@ -4,16 +4,36 @@
 /** Flop macros
  * These are to make the intent of flop inferences easy to determine.
  * Naming convention:
- *    - ff    Infers a collection of flip flops.
- *    - latch Infers a collection of latches.
- *    - cg    Infers a clockgate, often a good idea for power.
- *    - nocg  Does not infer a clockgate.
- *    - arst  Infers asynchronous active-high reset.
- *    - arstn Infers asynchronous active-low reset.
- *    - srst  Infers synchronous active-high reset.
- *    - srstn Infers synchronous active-low reset.
- *    - norst Infers no reset, often a good idea for area.
- *    - upk   Functionally equivalent macros for unpacked vectors.
+ *  - ff    Infers a collection of flip flops.
+ *  - latch Infers a collection of latches.
+ *  - cg    Infers a clockgate, often a good idea for power.
+ *  - nocg  Does not infer a clockgate.
+ *  - arst  Infers asynchronous active-high reset.
+ *  - arstn Infers asynchronous active-low reset.
+ *  - srst  Infers synchronous active-high reset.
+ *  - srstn Infers synchronous active-low reset.
+ *  - norst Infers no reset, often a good idea for area.
+ *  - upk   Functionally equivalent macros for unpacked vectors.
+ *
+ * Recommendations:
+ *  - Use unpacked arrays where elements don't need to grouped together.
+ *    - Keeps code small and tidy.
+ *    - Lets synth tools ungroup logic.
+ *  - Use clockgates where possible.
+ *    - If the synth tool decides it isn't worth it for power then it can
+ *      implement the clockgate as a recirculating mux, but it should have the
+ *      choice, particularly if the number of flops is parameterized.
+ *  - Prefer synchronous resets (srst) instead of asynchronous (arst).
+ *    - This prevents huge global asynch resets acting as antennas with lots of
+ *      unintended consequences on large designs.
+ *  - Prefer non-reset (norst).
+ *    - Non-reset flops are smaller on ASIC designs.
+ *    - Reset network will be smaller, so less like an antenna.
+ *    - Especially useful for datapath where reset value is meaningless.
+ *
+ * TL;DR:
+ *  - ff_cg_norst[_upk]     Datapath
+ *  - ff_[no]cg_srst[_upk]  Control path
  */
 
 // {{{ `ff_cg_arst (logic [9:0], foo, i_clk, i_cg, i_rst, '0)
