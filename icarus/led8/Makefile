@@ -10,9 +10,13 @@ $(DIR_BLD)/hdl/%.sv: hdl/%.sv
 	mkdir -p $(DIR_BLD)/hdl
 	iverilog -I hdl -E $^ -o $@
 
-$(DIR_BLD)/tb_m.vvp: tb/tb_m.sv
+$(DIR_BLD)/tb/%.sv: tb/%.sv
+	mkdir -p $(DIR_BLD)/tb
+	iverilog -I hdl -E $^ -o $@
+
+$(DIR_BLD)/tb_m.vvp: $(DIR_BLD)/tb/tb_m.sv
 $(DIR_BLD)/tb_m.vvp: $(DIR_BLD)/hdl/pl_m.sv
-	iverilog -g2012 -I hdl -s tb_m -o $@ tb/*.sv $(DIR_BLD)/hdl/*.sv
+	iverilog -g2012 -I hdl -s tb_m -o $@ $(DIR_BLD)/tb/*.sv $(DIR_BLD)/hdl/*.sv
 
 build: $(DIR_BLD)/tb_m.vvp
 
